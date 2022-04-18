@@ -1,0 +1,67 @@
+name: CI / CD
+
+# Controls when the workflow will run
+on:
+  create:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+.*'
+  
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Determine Release Version
+        shell: bash
+        run: |
+          versionFile=version.txt
+          echo "versionFile = $versionFile"
+          ((git log -n 1 --pretty=format:"%H" | git tag --contains | grep -E "[0-9]+.[0-9]+.[0-9]+.*") || printf "1\n2\n3") > "$versionFile"
+          tagCount=$(cat "$versionFile" | wc -l)
+          echo "tagCount = $tagCount"
+          if [ 1 == $tagCount ]; then
+              echo "Then branch"
+              versionTag=$(cat "$versionFile")
+              echo "Target image name: ${{ secrets.DOCKER_HUB_REPO_NAME }}:$versionTag"
+              echo "versionTag=$versionTag" >> $GITHUB_ENV
+          else
+              echo "Else branch"
+          fi
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+        if: ${{ env.versionTag != '' }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        if: ${{ env.versionTag != '' }}
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        if: ${{ env.versionTag != '' }}
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        if: ${{ env.versionTag != '' }}
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_REPO_NAME }}:${{ env.versionTag }}
+          file: VideoEncoder/Dockerfile

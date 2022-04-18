@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="Dockerfile" />
+	<None Include="..\.dockerignore" Link=".dockerignore">
+	  <DependentUpon>$(DockerDefaultDockerfile)</DependentUpon>
+	</None>
+    <Compile Include="ResultUtils.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="ArgsProvider.fs" />
+    <Compile Include="MediaInfo.fs" />
+    <Compile Include="MediaEncoder.fs" />
+    <Compile Include="EncodingService.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="6.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+  </ItemGroup>
+
+</Project>
