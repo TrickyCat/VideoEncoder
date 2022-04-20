@@ -63,5 +63,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_HUB_REPO_NAME }}:${{ env.versionTag }}
+          tags: ${{ secrets.DOCKER_HUB_REPO_NAME }}:${{ env.versionTag }},${{ secrets.DOCKER_HUB_REPO_NAME }}:latest
           file: VideoEncoder/Dockerfile
