@@ -14,6 +14,18 @@ It's a simple helper app that recodes video clips while trying to reduce their s
 
 - From my experience, sometimes the size is optimized even by a factor of ten: `36 GB` -> `3.5 GB` but that obviously greatly depends on the encoding of the source video clips
 
+- Input media files formats / extensions:
+
+  - `*.mp4`
+  - `*.ts`
+  - `*.avi`
+  - `*.wmv`
+  - `*.mov`
+
+- Output media files formats / extensions:
+
+  - `*.mp4`
+
 - Video quality of the recoded video clips is visually comparable to the one of the source clips.
 
   **Note:** 

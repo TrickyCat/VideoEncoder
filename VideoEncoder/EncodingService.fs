@@ -4,7 +4,7 @@ open System.IO
 open MediaInfo
 open MediaEncoder
 
-let private searchPatterns = [| "*.mp4" |]
+let private searchPatterns = [| "*.mp4"; "*.ts"; "*.avi"; "*.wmv"; "*.mov" |]
 
 
 let private getFiles' folderPath searchPattern : Result<string array, string> =
@@ -52,12 +52,13 @@ let private normalizeFolder (s: string) = Path.TrimEndingDirectorySeparator s
 
 let private getTargetFilePath sourceFolder targetFolder (sourceFilePath: string) =
     let parent = Directory.GetParent(sourceFolder |> normalizeFolder).FullName |> endsWithSeparatorChar
-    
-    Path.Combine(
-        targetFolder,
-        sourceFilePath.Substring(parent.Length)
-    )
-    
+    Path.ChangeExtension(
+        Path.Combine(
+            targetFolder,
+            sourceFilePath.Substring(parent.Length)
+        ),
+        ".mp4")
+
     
 let private createParentFolders filePath =
     try
